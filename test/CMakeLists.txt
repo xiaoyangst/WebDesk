@@ -5,3 +5,4 @@ set(CMAKE_CXX_STANDARD 20)
 aux_source_directory(../utils UT_SRC)
 
 add_executable(Test TestUtils.cpp catch_amalgamated.cpp ${UT_SRC})
+target_link_libraries(Test  pthread)
