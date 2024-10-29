@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD 20)
 link_directories(${PROJECT_SOURCE_DIR}/lib)
 
 link_libraries(log4cpp)
+link_libraries(hv)
 
+include_directories(thirdpart/hv)
 include_directories(thirdpart/log4cpp/threading)
 include_directories(thirdpart/log4cpp)
 include_directories(thirdpart)
