@@ -11,17 +11,17 @@
 #ifndef WEBDESK_UTILS_LOG_H_
 #define WEBDESK_UTILS_LOG_H_
 
-#include<iostream>
+#include <iostream>
 #include <memory>
-#include<log4cpp/Category.hh>
-#include<log4cpp/Appender.hh>
-#include<log4cpp/OstreamAppender.hh>
-#include<log4cpp/FileAppender.hh>
-#include<log4cpp/RollingFileAppender.hh>
-#include<log4cpp/PatternLayout.hh>
-#include<log4cpp/Priority.hh>
-#include<string>
-#include<sstream>
+#include <log4cpp/Category.hh>
+#include <log4cpp/Appender.hh>
+#include <log4cpp/OstreamAppender.hh>
+#include <log4cpp/FileAppender.hh>
+#include <log4cpp/RollingFileAppender.hh>
+#include <log4cpp/PatternLayout.hh>
+#include <log4cpp/Priority.hh>
+#include <string>
+#include <sstream>
 
 #include "Singleton.h"
 
@@ -29,27 +29,27 @@ enum LOGLEVEL { EMERG, FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG };
 
 namespace WebDesk::Utils {
 
-class Log : public Singleton<Log>, public std::enable_shared_from_this<Log>{
+class Log : public Singleton<Log>, public std::enable_shared_from_this<Log> {
   friend class Singleton<Log>;
  public:
   void setLogLevel(log4cpp::Priority::Value priority);
   std::string int2string(int lineNumber);
-  void fatal(const char* msg);
-  void error(const char* msg);
-  void warn(const char* msg);
-  void info(const char* msg);
-  void debug(const char* msg);
+  void fatal(const char *msg);
+  void error(const char *msg);
+  void warn(const char *msg);
+  void info(const char *msg);
+  void debug(const char *msg);
   ~Log();
  private:
   Log();
  private:
-  log4cpp::Category& m_rootCategory;
+  log4cpp::Category &m_rootCategory;
 };
 
-#define catMsg(msg) string(msg).append(" {fileName:")\
-	.append(__FILE__).append(" functionName:")\
-	.append(__func__).append(" lineNumber:")\
-	.append(Log::Singleton::getInstance()->int2string(__LINE__)).append("}").c_str()
+#define catMsg(msg) std::string(msg).append(" {fileName:")\
+    .append(__FILE__).append(" functionName:")\
+    .append(__func__).append(" lineNumber:")\
+    .append(Log::Singleton::getInstance()->int2string(__LINE__)).append("}").c_str()
 
 #define logSetLogLevel(priority) Log::Singleton::getInstance()->setLogLevel(priority)
 #define ERROR_LOG(msg) Log::Singleton::getInstance()->error(catMsg(msg))

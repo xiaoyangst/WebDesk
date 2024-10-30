@@ -1,14 +1,15 @@
 
 #include "Config.h"
+#include "Log.h"
 
-#include <utility>
+//using namespace std;
 
 namespace WebDesk::Utils {
 
 Config::Config(std::string path)
     : m_path(std::move(path)), m_file(m_path) {
   if (!m_file.is_open()) {
-    std::cerr << "Failed to open file: " << m_path << std::endl;
+    ERROR_LOG("Failed to open file");
   }
 }
 

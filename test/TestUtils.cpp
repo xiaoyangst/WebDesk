@@ -3,9 +3,7 @@
 //
 
 
-#define CATCH_CONFIG_MAIN
-#include "catch_amalgamated.hpp"
-#include "Config.h"
+#include "public.h"
 
 TEST_CASE("A Config Test"){
   using namespace WebDesk::Utils;

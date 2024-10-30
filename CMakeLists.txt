@@ -20,6 +20,7 @@ aux_source_directory(utils U_SRC)
 aux_source_directory(src S_SRC)
 
 add_subdirectory(test)
+add_subdirectory(src)
 
 add_executable(WebDesk main.cpp ${U_SRC} ${S_SRC} ${T_SRC})
 target_link_libraries(WebDesk pthread)
