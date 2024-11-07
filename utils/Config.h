@@ -15,7 +15,7 @@
 #include <fstream>
 #include <iostream>
 
-namespace WebDesk::Utils {
+namespace WebDesk {
 
 class Config {
  public:

@@ -4,7 +4,7 @@
 
 //using namespace std;
 
-namespace WebDesk::Utils {
+namespace WebDesk{
 
 Config::Config(std::string path)
     : m_path(std::move(path)), m_file(m_path) {

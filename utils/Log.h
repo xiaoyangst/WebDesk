@@ -3,7 +3,7 @@
   * @file           : Log.h
   * @author         : xy
   * @brief          : 封装 log4cpp 日志库
-  * @attention      : None
+  * @attention      : 当日志系统有多个日志目的地时，每一个目的地 Appender 都需要设置一个布局 Layout（一对一关系）
   * @date           : 2024/10/28
   ******************************************************************************
   */
@@ -27,7 +27,7 @@
 
 enum LOGLEVEL { EMERG, FATAL, ALERT, CRIT, ERROR, WARN, NOTICE, INFO, DEBUG };
 
-namespace WebDesk::Utils {
+namespace WebDesk {
 
 class Log : public Singleton<Log>, public std::enable_shared_from_this<Log> {
   friend class Singleton<Log>;
