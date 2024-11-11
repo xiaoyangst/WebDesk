@@ -33,7 +33,7 @@ class CCommand {
   void registerUser(UserInfo &info, const hv::SocketChannelPtr &channel);
   void loginUser(UserInfo &info, const hv::SocketChannelPtr &channel);
   void logoutUser(UserInfo &info, const hv::SocketChannelPtr &channel);
-
+  bool checkToken(const std::string& path);
  private:
   std::unordered_map<MAINWINDOW, std::function<void(UserInfo &userInfo, const hv::SocketChannelPtr &channel)>>
       MainWindowMap;

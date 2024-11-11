@@ -28,7 +28,6 @@ class Config {
   std::string rtrim(const std::string &s);
  private:
   std::string m_path;
-  std::ifstream m_file;
 };
 
 } // WebDesk::Utils

@@ -12,9 +12,7 @@ int main() {
   std::string server_ip = c_config.getValue("server_ip");
   int port = stoi(c_config.getValue("server_port"));
 
-
-
-  CClient c_client(port,server_ip.c_str());
+  std::unique_ptr<CClient> c_client = std::make_unique<CClient>(port,server_ip);
 
   return 0;
 }

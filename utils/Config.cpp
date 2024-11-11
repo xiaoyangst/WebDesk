@@ -6,17 +6,15 @@
 
 namespace WebDesk{
 
-Config::Config(std::string path)
-    : m_path(std::move(path)), m_file(m_path) {
-  if (!m_file.is_open()) {
-    ERROR_LOG("Failed to open file");
-  }
-}
+Config::Config(std::string path) : m_path(std::move(path)) {}
 
 std::string
 Config::getValue(const std::string &key) {
-  m_file.clear();
-  m_file.seekg(0);
+  std::ifstream m_file(m_path);
+  if (!m_file.is_open()) {
+    ERROR_LOG("Failed to open config file");
+    return "";
+  }
 
   std::string line;
   while (std::getline(m_file, line)) {

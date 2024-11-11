@@ -16,12 +16,11 @@ class User {
   std::string username;
   std::string password;
   std::string salt;
-  std::optional<std::time_t> lastActive;
-  bool death;
+  bool death; // 0 表示存在该用户，1 表示不存在该用户（即注销）
 
   User() = default;
-  User(int id, std::string user, std::string pass, std::string salt, bool death, std::optional<std::time_t> lastActive = std::nullopt)
-      : userId(id), username(std::move(user)), password(std::move(pass)), salt(std::move(salt)), death(death), lastActive(lastActive) {}
+  User(int id, std::string user, std::string pass, std::string salt)
+      : userId(id), username(std::move(user)), password(std::move(pass)), salt(std::move(salt)) {}
 
 };
 

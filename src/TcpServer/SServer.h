@@ -18,12 +18,12 @@
 namespace WebDesk {
 class SServer {
  public:
-  SServer(int port, const char *ip);
+  SServer(int port, std::string  ip);
  private:
   void waitConnect();
  private:
   int m_port;
-  const char *m_ip;
+  std::string m_ip;
   int m_listenfd;
   SCommand m_command;
   std::shared_ptr<ConnectionPool> m_mysqlPool;

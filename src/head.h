@@ -7,12 +7,7 @@
 
 #include <string>
 
-// 定义颜色代码
-#define RESET   "\033[0m"
-#define RED     "\033[31m"      // 红色
-#define GREEN   "\033[32m"      // 绿色
-#define YELLOW  "\033[33m"      // 黄色
-#define BLUE    "\033[34m"      // 蓝色
+
 
 
 // 主界面
@@ -25,7 +20,8 @@ enum class WEBDESK{
 };
 // 信息
 enum class MESSAGE{
-  LOGINSUCCESS,LOGINFAIL,REGISTERSUCCESS,REGISTERFAIL,LOGOUTSUCCESS,LOGOUTFAIL,
+  LOGINSUCCESS,LOGINFAIL,REGISTERSUCCESS,REGISTERFAIL,
+  LOGOUTSUCCESS,LOGOUTFAIL,USERNOEXIST,PWDERROR,
   EXIST
 };
 

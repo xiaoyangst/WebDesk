@@ -1,4 +1,5 @@
 #include <string>
+#include <utility>
 #include "SServer.h"
 #include "Log.h"
 #include "json.hpp"
@@ -6,11 +7,11 @@
 
 using json = nlohmann::json;
 namespace WebDesk {
-SServer::SServer(int port, const char *ip)
-    : m_port(port), m_ip(ip)
+SServer::SServer(int port, std::string ip)
+    : m_port(port), m_ip(std::move(ip))
     , m_mysqlPool(ConnectionPool::getInstance())
     {
-  m_listenfd = srv.createsocket(port, m_ip);
+  m_listenfd = srv.createsocket(port, m_ip.c_str());
   if (m_listenfd < 0) {
     ERROR_LOG("create socket failed");
     return;

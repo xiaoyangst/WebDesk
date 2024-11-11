@@ -1,14 +1,17 @@
 #include "CClient.h"
+
+#include <utility>
 #include "json.hpp"
+#include "public.h"
 
 using json = nlohmann::json;
 namespace WebDesk {
 bool CClient::is_running = true;
 bool CClient::is_login = false;
 
-CClient::CClient(int port, const char *ip)
-    : m_port(port), m_ip(ip) {
-  m_connfd = tcp_client.createsocket(m_port, m_ip);
+CClient::CClient(int port, std::string ip)
+    : m_port(port), m_ip(std::move(ip)) {
+  m_connfd = tcp_client.createsocket(m_port, m_ip.c_str());
   if (m_connfd < 0) {
     printf("connfd failed\n");
     return;
@@ -77,7 +80,7 @@ CClient::connectServer() {
   };
 
   tcp_client.start();
-  while (true);
+  while (is_running);
 }
 
 void
@@ -95,11 +98,6 @@ CClient::getfd() const {
   return m_connfd;
 }
 
-void
-CClient::printColor(const std::string &message, const std::string &color) {
-  std::cout << std::endl;
-  std::cout << color << message << RESET << std::endl;
-}
 
 void
 CClient::taskMainWindow(MESSAGE type, const hv::SocketChannelPtr &channel) {
@@ -107,6 +105,16 @@ CClient::taskMainWindow(MESSAGE type, const hv::SocketChannelPtr &channel) {
     case MESSAGE::LOGINSUCCESS: {
       printColor("登陆成功！！！", GREEN);
       is_login = true;
+      readCommands(channel);
+      break;
+    }
+    case MESSAGE::USERNOEXIST: {
+      printColor("用户不存在！！！", RED);
+      readCommands(channel);
+      break;
+    }
+    case MESSAGE::PWDERROR: {
+      printColor("密码错误！！！", RED);
       readCommands(channel);
       break;
     }

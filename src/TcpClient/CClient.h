@@ -18,7 +18,7 @@ namespace WebDesk {
 class CClient {
   friend class CCommand;
  public:
-  CClient(int port, const char *ip);
+  CClient(int port, std::string m_ip);
 
   void connectServer();
   void showMainWindow();
@@ -32,15 +32,15 @@ class CClient {
   static void setRunning(bool running);
   int getfd() const;
  private:
+ private:
   int m_port;
-  const char *m_ip;
+  std::string m_ip;
   static bool is_login;
   static bool is_running;
   CCommand m_command;
   hv::TcpClient tcp_client;
   int m_connfd;
- private:
-  void printColor(const std::string &message, const std::string &color);
+  std::string m_token;
  public:
   CClient(const CClient &) = delete;
   CClient &operator=(const CClient &) = delete;

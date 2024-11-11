@@ -12,10 +12,10 @@ using namespace WebDesk;
 Config s_config;
 
 int main(){
+
   std::string server_ip = s_config.getValue("server_ip");
   int port = stoi(s_config.getValue("server_port"));
-
-  SServer s(port,server_ip.c_str());
+  std::unique_ptr<SServer> server = std::make_unique<SServer>(port,server_ip);
 
   return 0;
 }

@@ -14,4 +14,4 @@ aux_source_directory(${CMAKE_SOURCE_DIR}/utils TCPS_U_SRC)
 aux_source_directory(${CMAKE_SOURCE_DIR}/src/MySQL TCPS_SQL_SRC)
 
 add_executable(TcpServer Server.cpp ${TCPS_SRC} ${TCPS_U_SRC} ${TCPS_SQL_SRC})
-target_link_libraries(TcpServer pthread mysqlclient)
+target_link_libraries(TcpServer pthread mysqlclient l8w8jwt)

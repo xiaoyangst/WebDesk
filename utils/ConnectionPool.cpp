@@ -42,8 +42,6 @@ ConnectionPool::addConnection() {
   auto *conn = new MysqlConn;
   if(!conn->connect(ip_, user_, passwd_, dbName_, port)){
     std::cout<<"mysql连接失败"<<std::endl;
-  }else{
-    std::cout<<"mysql连接成功"<<std::endl;
   }
   conn->refreshAliveTime();
   connectionQueue_.push(conn);

@@ -25,6 +25,7 @@ CCommand::parseMainWindowsCommands(const std::string &command, const hv::SocketC
     getline(std::cin, userInfo->password);
     task = MAINWINDOW::REGISTER;
   } else if (command == "login") {
+    // 检查本地 token 是否有效
     std::cout << "输入用户：";
     getline(std::cin, userInfo->username);
     std::cout << "输入密码：";
@@ -85,6 +86,7 @@ CCommand::logoutUser(UserInfo &info, const hv::SocketChannelPtr &channel) {
   logout_json["login"] = false;
   logout_json["status"] = MAINWINDOW::LOGOUT;
   logout_json["username"] = info.username;
+  logout_json["password"] = info.password;
   auto data = logout_json.dump();
 
   channel->write(data);

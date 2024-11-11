@@ -23,9 +23,12 @@ class UserDao {
  public:
   explicit UserDao(std::shared_ptr<MysqlConn> &conn);
   ~UserDao() = default;
-  bool addUser(const std::shared_ptr<User>& user); // 注册用户
+  bool addUser(const User& user); // 注册用户
   bool updateUser(int userId,bool death);  // 登录用户
   bool deleteUser(int userId);  // 注销用户
+  int getUserId(const std::string& username); // 失败或不存在返回 -1
+  std::string getSalt(int userId);  // 获取盐
+  std::string getPwd(int userId);   // 获取哈希密码
  private:
   std::shared_ptr<MysqlConn> m_conn;
 };

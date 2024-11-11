@@ -13,4 +13,4 @@ aux_source_directory(. TCPS_CRC)
 aux_source_directory(${CMAKE_SOURCE_DIR}/utils TCPS_U_CRC)
 
 add_executable(TcpClient Client.cpp ${TCPS_CRC} ${TCPS_U_CRC})
-target_link_libraries(TcpClient pthread mysqlclient)
+target_link_libraries(TcpClient pthread mysqlclient l8w8jwt)
