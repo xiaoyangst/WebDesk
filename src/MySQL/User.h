@@ -9,7 +9,7 @@
 #include <optional>
 #include <ctime>
 #include <utility>
-
+namespace WebDesk {
 class User {
  public:
   int userId;
@@ -23,5 +23,5 @@ class User {
       : userId(id), username(std::move(user)), password(std::move(pass)), salt(std::move(salt)) {}
 
 };
-
+}
 #endif //WEBDESK_SRC_MYSQL_USER_H_

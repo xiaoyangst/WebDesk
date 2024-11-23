@@ -46,7 +46,12 @@ SServer::waitConnect() {
         item->second(userInfo, channel,sql);
       }
     } else {
-      auto type = data_json["status"].get<WEBDESK>();
+      auto type = data_json["command"].get<WEBDESK>();
+      auto item = m_command.WebDeskMap.find(type);
+      if (item != m_command.WebDeskMap.end()) {
+        auto sql = m_mysqlPool->getConnection();
+        item->second(data_json,channel,sql);
+      }
     }
   };
   srv.setThreadNum(4);

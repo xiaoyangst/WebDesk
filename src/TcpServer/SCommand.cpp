@@ -2,11 +2,13 @@
 #include "SCommand.h"
 #include "json.hpp"
 #include "UserDao.h"
+#include "DirectoryForestDao.h"
 #include "public.h"
 using json = nlohmann::json;
 namespace WebDesk {
 SCommand::SCommand() {
   registerMainWindow();
+  registerWebDesk();
 }
 
 void SCommand::registerMainWindow() {
@@ -14,7 +16,8 @@ void SCommand::registerMainWindow() {
       const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn) {
     UserDao user_dao(mysql_conn);
     User user;
-    user.username = userInfo->username;
+    auto username = userInfo->username;
+    user.username = username;
     user.salt = generate_salt();
     auto crypt_pwd = userInfo->password + user.salt;
     user.password = sha256_string(crypt_pwd);
@@ -23,6 +26,18 @@ void SCommand::registerMainWindow() {
     json register_json;
     if (is_success) {
       register_json["status"] = MESSAGE::REGISTERSUCCESS;
+
+      // 注册成功之后，要给该用于添加一个目录 即 /home/用户名
+      DirectoryForestDao directory_forest_dao(mysql_conn);
+      int userId = user_dao.getUserId(userInfo->username);
+      // 准备插入数据
+      DirectoryForest directory_forest;
+      auto file_path = "/home/" + username;
+      directory_forest.file_path = file_path;
+      directory_forest.file_name = username;
+      directory_forest.belong_user = userId;
+      directory_forest.father_id = -1;  // -1 表示 根目录 home 的 ID，实际上数据库中不会有 home 目录的记录
+      directory_forest_dao.addDir(directory_forest);
     } else {
       register_json["status"] = MESSAGE::REGISTERFAIL;
       std::cout<<"失败"<<std::endl;
@@ -52,13 +67,11 @@ void SCommand::registerMainWindow() {
       return ;
     }
 
-//    std::string token;
-//    JwtEncode(token,userInfo->username);
-//    std::cout<<"token = "<<token<<std::endl;
-//    if (JwtDecode(token)){
-//      std::cout<<"合法用户"<<std::endl;
-//    }
-//    login_json["token"] = token;
+    std::string token;
+    JwtEncode(token,userInfo->username);
+    login_json["username"] = userInfo->username;
+    login_json["password"] = userInfo->password;
+    login_json["token"] = token;
     login_json["status"] = MESSAGE::LOGINSUCCESS;
     auto data = login_json.dump();
     channel->write(data);
@@ -83,6 +96,34 @@ void SCommand::registerMainWindow() {
       logout_json["status"] = MESSAGE::LOGOUTFAIL;
     }
     auto data = logout_json.dump();
+    channel->write(data);
+  };
+}
+void SCommand::registerWebDesk() {
+  WebDeskMap[WEBDESK::MKDIR] = [&](const json& data_json,
+  const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn){
+    DirectoryForestDao directory_forest_dao(mysql_conn);
+    UserDao user_dao(mysql_conn);
+    json df_json;
+    // 获取用户 id
+    auto user = data_json["user"].get<std::string>();
+    int userId = user_dao.getUserId(user);
+    // 准备插入数据
+    DirectoryForest directory_forest;
+    auto file_path = data_json["filepath"].get<std::string>();
+    auto file_name = data_json["filename"].get<std::string>();
+    int fatherID = directory_forest_dao.getFatId(file_path);
+    directory_forest.file_path = file_path + "/" + file_name;
+    directory_forest.file_name = file_name;
+    directory_forest.belong_user = userId;
+    directory_forest.father_id = fatherID;
+    if(directory_forest_dao.addDir(directory_forest)){
+      df_json["status"] = MESSAGE::ADDDIRSUCCESS;
+    }else{
+      df_json["status"] = MESSAGE::ADDDIRFAIL;
+    }
+    std::cout<<"send"<<std::endl;
+    auto data = df_json.dump();
     channel->write(data);
   };
 }

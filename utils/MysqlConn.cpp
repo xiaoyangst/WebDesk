@@ -14,10 +14,11 @@ MysqlConn::connect(const std::string &ip, const std::string &user, const std::st
 }
 
 MysqlConn::~MysqlConn() {
+  freeResult();       //释放结果集
   if (conn_ != nullptr){
     mysql_close(conn_);     //关闭MySQL连接
+    conn_ = nullptr;
   }
-  freeResult();       //释放结果集
 }
 
 bool
@@ -49,7 +50,7 @@ std::string
 MysqlConn::value(int index) {
   //获取字段数
   int rowCount = mysql_num_fields(result_);
-  if (index >= rowCount || index < 0) return std::string();
+  if (index >= rowCount || index < 0) return {};
   //考虑到存储结果可能为二进制字符串，包含'\0'
   //先获取字符串头指针和字符串长度，能够得到完整的字符串
   char* val = row_[index];    //字段值的起始位置
@@ -86,7 +87,7 @@ MysqlConn::commit()
 }
 
 bool
-MysqlConn::rollbock()
+MysqlConn::rollback()
 {
   return mysql_rollback(conn_);
 }

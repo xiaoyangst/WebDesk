@@ -14,6 +14,10 @@
 #include <iostream>
 #include "CCommand.h"
 #include "hv/TcpClient.h"
+#include "json.hpp"
+#include "public.h"
+
+using json = nlohmann::json;
 namespace WebDesk {
 class CClient {
   friend class CCommand;
@@ -24,14 +28,18 @@ class CClient {
   void showMainWindow();
   void readCommands(const hv::SocketChannelPtr &channel);
 
-  void taskMainWindow(MESSAGE type, const hv::SocketChannelPtr &channel);
+  void taskMainWindow(MESSAGE type, const hv::SocketChannelPtr &channel,const json& data_json);
 
-  void taskWebDesk(MESSAGE type, const hv::SocketChannelPtr &channel);
+  void taskWebDesk(MESSAGE type, const hv::SocketChannelPtr &channel,const json& data_json);
 
   static void setLogin(bool login);
   static void setRunning(bool running);
+  static std::string getCurPath();
+  static std::string getUser();
   int getfd() const;
  private:
+  void downloadTask();
+  void uploadTask();
  private:
   int m_port;
   std::string m_ip;
@@ -40,7 +48,7 @@ class CClient {
   CCommand m_command;
   hv::TcpClient tcp_client;
   int m_connfd;
-  std::string m_token;
+  static std::shared_ptr<UserInfo> m_user;
  public:
   CClient(const CClient &) = delete;
   CClient &operator=(const CClient &) = delete;

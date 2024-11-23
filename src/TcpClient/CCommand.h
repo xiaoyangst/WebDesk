@@ -30,14 +30,21 @@ class CCommand {
   void registerMainWindow();
   void registerWebDesk();
  private:
-  void registerUser(UserInfo &info, const hv::SocketChannelPtr &channel);
-  void loginUser(UserInfo &info, const hv::SocketChannelPtr &channel);
-  void logoutUser(UserInfo &info, const hv::SocketChannelPtr &channel);
-  bool checkToken(const std::string& path);
+  void registerUser(const std::string& user,const std::string& pwd, const hv::SocketChannelPtr &channel);
+  void loginUser(const std::string& user,const std::string& pwd, const hv::SocketChannelPtr &channel);
+  void logoutUser(const std::string& user,const std::string& pwd, const hv::SocketChannelPtr &channel);
+
+  void ls(const std::string& file, const hv::SocketChannelPtr &channel);
+  void mkdirDir(const std::string& file, const hv::SocketChannelPtr &channel);
+  void removeFileDir(const std::string& file, const hv::SocketChannelPtr &channel);
+  void uploadFile(const std::string& file, const hv::SocketChannelPtr &channel);
+  void downloadFile(const std::string& file, const hv::SocketChannelPtr &channel);
+  void cdDir(const std::string& file, const hv::SocketChannelPtr &channel);
  private:
-  std::unordered_map<MAINWINDOW, std::function<void(UserInfo &userInfo, const hv::SocketChannelPtr &channel)>>
+  std::unordered_map<MAINWINDOW, std::function<void(std::string user,std::string pwd, const hv::SocketChannelPtr &channel)>>
       MainWindowMap;
-  std::unordered_map<WEBDESK, std::function<void(void)>> WebDeskMap;
+  std::unordered_map<WEBDESK, std::function<void(std::string file, const hv::SocketChannelPtr &channel)>>
+      WebDeskMap;
  public:
   CCommand(const CCommand &) = delete;
   CCommand &operator=(const CCommand &) = delete;

@@ -6,6 +6,8 @@
 
 Json库：json.hpp
 
+JWT库：l8w8jwt
+
 # 补充说明
 
 Utils 下 Log 类的封装参考 https://github.com/meihao1203/log4cpp

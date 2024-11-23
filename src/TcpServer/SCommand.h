@@ -16,6 +16,8 @@
 #include "hv/TcpServer.h"
 #include "MysqlConn.h"
 #include "User.h"
+#include "json.hpp"
+using json = nlohmann::json;
 namespace WebDesk {
 class SCommand {
   friend class SServer;
@@ -25,11 +27,16 @@ class SCommand {
   // 注册回调
   void registerMainWindow();
   void registerWebDesk();
+
  private:
   std::unordered_map<MAINWINDOW, std::function<void(std::shared_ptr<UserInfo> &userInfo,
-      const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn)>>
+                                                    const hv::SocketChannelPtr &channel,
+                                                    std::shared_ptr<MysqlConn> &mysql_conn)>>
       MainWindowMap;
-  std::unordered_map<WEBDESK, std::function<void(void)>> WebDeskMap;
+  std::unordered_map<WEBDESK, std::function<void(const json& data_json,
+                                                 const hv::SocketChannelPtr &channel,
+                                                 std::shared_ptr<MysqlConn> &mysql_conn)>>
+      WebDeskMap;
 };
 }
 #endif //WEBDESK_SRC_TCPSERVER_SCOMMAND_H_

@@ -38,14 +38,19 @@ class MysqlConn
   // 提交事务
   bool commit();
   // 事务回滚
-  bool rollbock();
+  bool rollback();
   // 刷新起始的空闲时间点
   void refreshAliveTime();
   // 计算连接存活的总时长
   long long getAliveTime();
 
+  MysqlConn(const MysqlConn&) = delete;
+  MysqlConn& operator=(const MysqlConn&) = delete;
+
  private:
   void freeResult();
+
+
 
   MYSQL* conn_ = nullptr;
   MYSQL_RES* result_ = nullptr;   // 执行sql返回的结果（通常存储查询结果）

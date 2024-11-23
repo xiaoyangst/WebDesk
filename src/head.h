@@ -16,12 +16,14 @@ enum class MAINWINDOW{
 };
 // 网盘系统界面
 enum class WEBDESK{
-  PWD,LS,MKDIR,REMOVE,UPLOAD,DOWNLOAD,QUIT,DEFAULT
+  PWD,LS,MKDIR,REMOVE,UPLOAD,DOWNLOAD,CD,QUIT,DEFAULT
 };
 // 信息
 enum class MESSAGE{
   LOGINSUCCESS,LOGINFAIL,REGISTERSUCCESS,REGISTERFAIL,
   LOGOUTSUCCESS,LOGOUTFAIL,USERNOEXIST,PWDERROR,
+  SUCCESS,FAIL,
+  ADDDIRSUCCESS,ADDDIRFAIL,
   EXIST
 };
 
@@ -33,6 +35,7 @@ enum class MESSAGE{
 struct UserInfo{
   std::string username;
   std::string password;
+  std::string token;
   std::string current_path;
 };
 
