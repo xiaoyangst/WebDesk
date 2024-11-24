@@ -183,6 +183,21 @@ CClient::taskWebDesk(MESSAGE type, const hv::SocketChannelPtr &channel,const jso
       readCommands(channel);
       break;
     }
+    case MESSAGE::REMOVESUCCESS:{
+      printColor("删除文件/文件夹成功！！！",GREEN);
+      readCommands(channel);
+      break;
+    }
+    case MESSAGE::REMOVEFAIL:{
+      printColor("删除文件/文件夹失败！！！",RED);
+      readCommands(channel);
+      break;
+    }
+    case MESSAGE::REMOVENOEXIST:{
+      printColor("不要尝试删除不存在的文件/文件夹！！！",RED);
+      readCommands(channel);
+      break;
+    }
     default:
       std::cout << "没有返回" << std::endl;
   }

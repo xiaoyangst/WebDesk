@@ -40,6 +40,8 @@ class CCommand {
   void uploadFile(const std::string& file, const hv::SocketChannelPtr &channel);
   void downloadFile(const std::string& file, const hv::SocketChannelPtr &channel);
   void cdDir(const std::string& file, const hv::SocketChannelPtr &channel);
+
+  bool judgeFile(const std::string& file);  // true 为 文件  false 为 目录
  private:
   std::unordered_map<MAINWINDOW, std::function<void(std::string user,std::string pwd, const hv::SocketChannelPtr &channel)>>
       MainWindowMap;

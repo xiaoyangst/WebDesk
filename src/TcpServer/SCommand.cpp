@@ -13,7 +13,8 @@ SCommand::SCommand() {
 
 void SCommand::registerMainWindow() {
   MainWindowMap[MAINWINDOW::REGISTER] = [&](std::shared_ptr<UserInfo> &userInfo,
-      const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn) {
+                                            const hv::SocketChannelPtr &channel,
+                                            std::shared_ptr<MysqlConn> &mysql_conn) {
     UserDao user_dao(mysql_conn);
     User user;
     auto username = userInfo->username;
@@ -40,35 +41,35 @@ void SCommand::registerMainWindow() {
       directory_forest_dao.addDir(directory_forest);
     } else {
       register_json["status"] = MESSAGE::REGISTERFAIL;
-      std::cout<<"失败"<<std::endl;
+      std::cout << "失败" << std::endl;
     }
     auto data = register_json.dump();
     channel->write(data);
   };
 
   MainWindowMap[MAINWINDOW::LOGIN] = [&](std::shared_ptr<UserInfo> &userInfo,
-      const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn) {
+                                         const hv::SocketChannelPtr &channel, std::shared_ptr<MysqlConn> &mysql_conn) {
     UserDao user_dao(mysql_conn);
     json login_json;
     int userId;
-    if ((userId = user_dao.getUserId(userInfo->username)) == -1){ // 用户不存在
+    if ((userId = user_dao.getUserId(userInfo->username)) == -1) { // 用户不存在
       login_json["status"] = MESSAGE::USERNOEXIST;
       auto data = login_json.dump();
       channel->write(data);
-      return ;
+      return;
     }
 
     auto crypt_pwd = userInfo->password + user_dao.getSalt(userId);
     auto password = sha256_string(crypt_pwd);
-    if (password != user_dao.getPwd(userId)){  // 密码错误
+    if (password != user_dao.getPwd(userId)) {  // 密码错误
       login_json["status"] = MESSAGE::PWDERROR;
       auto data = login_json.dump();
       channel->write(data);
-      return ;
+      return;
     }
 
     std::string token;
-    JwtEncode(token,userInfo->username);
+    JwtEncode(token, userInfo->username);
     login_json["username"] = userInfo->username;
     login_json["password"] = userInfo->password;
     login_json["token"] = token;
@@ -78,18 +79,18 @@ void SCommand::registerMainWindow() {
   };
 
   MainWindowMap[MAINWINDOW::LOGOUT] = [&](std::shared_ptr<UserInfo> &userInfo,
-      const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn) {
+                                          const hv::SocketChannelPtr &channel, std::shared_ptr<MysqlConn> &mysql_conn) {
     UserDao user_dao(mysql_conn);
     json logout_json;
     int userId;
-    if ((userId = user_dao.getUserId(userInfo->username)) == -1){ // 用户不存在
+    if ((userId = user_dao.getUserId(userInfo->username)) == -1) { // 用户不存在
       logout_json["status"] = MESSAGE::USERNOEXIST;
       auto data = logout_json.dump();
       channel->write(data);
-      return ;
+      return;
     }
     bool death = true;
-    bool is_success = user_dao.updateUser(userId,death);
+    bool is_success = user_dao.updateUser(userId, death);
     if (is_success) {
       logout_json["status"] = MESSAGE::LOGOUTSUCCESS;
     } else {
@@ -100,8 +101,9 @@ void SCommand::registerMainWindow() {
   };
 }
 void SCommand::registerWebDesk() {
-  WebDeskMap[WEBDESK::MKDIR] = [&](const json& data_json,
-  const hv::SocketChannelPtr &channel,std::shared_ptr<MysqlConn> &mysql_conn){
+  WebDeskMap[WEBDESK::MKDIR] = [&](const json &data_json,
+                                   const hv::SocketChannelPtr &channel,
+                                   std::shared_ptr<MysqlConn> &mysql_conn) {
     DirectoryForestDao directory_forest_dao(mysql_conn);
     UserDao user_dao(mysql_conn);
     json df_json;
@@ -112,19 +114,56 @@ void SCommand::registerWebDesk() {
     DirectoryForest directory_forest;
     auto file_path = data_json["filepath"].get<std::string>();
     auto file_name = data_json["filename"].get<std::string>();
-    int fatherID = directory_forest_dao.getFatId(file_path);
+    int fatherID = directory_forest_dao.getId(file_path);
     directory_forest.file_path = file_path + "/" + file_name;
     directory_forest.file_name = file_name;
     directory_forest.belong_user = userId;
     directory_forest.father_id = fatherID;
-    if(directory_forest_dao.addDir(directory_forest)){
+    if (directory_forest_dao.addDir(directory_forest)) {
       df_json["status"] = MESSAGE::ADDDIRSUCCESS;
-    }else{
+    } else {
       df_json["status"] = MESSAGE::ADDDIRFAIL;
     }
-    std::cout<<"send"<<std::endl;
     auto data = df_json.dump();
     channel->write(data);
   };
+
+  WebDeskMap[WEBDESK::REMOVE] = [&](const json &data_json,
+                                    const hv::SocketChannelPtr &channel,
+                                    std::shared_ptr<MysqlConn> &mysql_conn) {
+    DirectoryForestDao directory_forest_dao(mysql_conn);
+    json df_json;
+    auto file_path = data_json["filepath"].get<std::string>();
+    auto file_name = data_json["filename"].get<std::string>();
+    auto file_type = data_json["filetype"].get<bool>();
+    auto path = file_path + "/" + file_name;
+    if(file_type) {
+      // 找到文件+标记为未删除 --》 删除
+      int file_id = directory_forest_dao.getDelId(path);
+      if (file_id == -1) {
+        df_json["status"] = MESSAGE::REMOVENOEXIST;
+      } else {
+        if (directory_forest_dao.delFile(file_id)) {
+          df_json["status"] = MESSAGE::REMOVESUCCESS;
+        } else {
+          df_json["status"] = MESSAGE::REMOVEFAIL;
+        }
+      }
+    }else {
+      int file_id = directory_forest_dao.getDelId(path);
+      if (file_id == -1) {
+        df_json["status"] = MESSAGE::REMOVENOEXIST;
+      } else {
+        if (directory_forest_dao.delDir(path)) {
+          df_json["status"] = MESSAGE::REMOVESUCCESS;
+        } else {
+          df_json["status"] = MESSAGE::REMOVEFAIL;
+        }
+      }
+      auto data = df_json.dump();
+      channel->write(data);
+    }
+  };
+
 }
 }

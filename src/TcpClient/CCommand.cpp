@@ -1,3 +1,4 @@
+#include <regex>
 #include "CCommand.h"
 
 #include "CClient.h"
@@ -174,7 +175,9 @@ void CCommand::removeFileDir(const std::string &file, const hv::SocketChannelPtr
   remove_json["login"] = true;
   remove_json["command"] = WEBDESK::REMOVE;
   remove_json["user"] = CClient::getUser();
-  remove_json["file"] = file;
+  remove_json["filepath"] = CClient::getCurPath();
+  remove_json["filename"] = file;
+  remove_json["filetype"] = judgeFile(file);
   auto data = remove_json.dump();
 
   channel->write(data);
@@ -205,9 +208,14 @@ void CCommand::cdDir(const std::string &file, const hv::SocketChannelPtr &channe
   cd_json["command"] = WEBDESK::CD;
   cd_json["user"] = CClient::getUser();
   cd_json["file"] = file;
+
   auto data = cd_json.dump();
 
   channel->write(data);
+}
+bool CCommand::judgeFile(const std::string &file) {
+  std::regex filePattern(R"(^[^/\\]+(\.[^/\\]+)+$)");
+  return std::regex_match(file, filePattern);
 }
 
 }
